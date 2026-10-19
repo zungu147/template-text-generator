@@ -1,1 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Template Text Generator</title>
 
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f5f9;
+    color: #202b3c;
+}
+
+header {
+    background: #172554;
+    color: white;
+    padding: 20px 15px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+header p {
+    margin: 0;
+    font-size: 14px;
+}
+
+nav {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+nav button {
+    flex: 1;
+    padding: 15px 5px;
+    border: 0;
+    background: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+nav button.active {
+    background: #2563eb;
+    color: white;
+}
+
+main {
+    max-width: 850px;
+    margin: auto;
+    padding: 15px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px #0000000c;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 14px 0 6px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 16px;
+    background: white;
+}
+
+input[type="color"] {
+    height: 45px;
+    padding: 4px;
+}
+
+input[type="checkbox"] {
+    width: auto;
+}
+
+button.action {
+    width: 100%;
+    border: 0;
+    border-radius: 7px;
+    padding: 13px;
+    margin-top: 12px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button.secondary {
+    background: #475569;
+}
+
+button.danger {
+    background: #dc2626;
+}
+
+button:disabled {
+    opacity: 0.5;
+}
+
+#imageCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 12px;
+    border: 1px solid #cbd5e1;
+    cursor: crosshair;
+    touch-action: manipulation;
+}
+
+.field-item {
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.field-item p {
+    overflow-wrap: anywhere;
+}
+
+.small {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.status {
+    padding: 12px;
+    border-radius: 7px;
+    margin-top: 12px;
+    background: #eff6ff;
+    overflow-wrap: anywhere;
+}
+
+#clientForm label {
+    margin-top: 18px;
+}
+
+footer {
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+    padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Template Text Generator</h1>
+    <p>Create customized images from your templates</p>
+</header>
+
+<nav>
+    <button id="adminTab" class="active"
+        onclick="showTab('admin')">Admin</button>
+
+    <button id="clientTab"
+        onclick="showTab('client')">Client Form</button>
+</nav>
+
+<main>
+
+<section id="adminSection">
+
+    <div class="card">
+        <h2>1. Upload Template</h2>
+
+        <p class="small">
+            Upload an image that you are authorized to use.
+            Supported formats include PNG, JPG and WebP.
+        </p>
+
+        <label for="templateFile">Choose template image</label>
+        <input id="templateFile" type="file"
+            accept="image/png,image/jpeg,image/webp">
+
+        <button class="action" onclick="clearTemplate()">
+            Remove Current Template
+        </button>
+    </div>
+
+    <div class="card">
+        <h2>2. Position Text Fields</h2>
+
+        <p class="small">
+            Tap the image where the text should appear.
+            Then enter a field name, such as Name, Date or Event.
+        </p>
+
+        <canvas id="imageCanvas"></canvas>
+
+        <div id="imageMessage" class="status">
+            Upload a template image to begin.
+        </div>
+
+        <label for="fieldName">Field name</label>
+        <input id="fieldName" type="text"
+            placeholder="e.g. Full Name">
+
+        <label for="fontSize">Font size (pixels)</label>
+        <input id="fontSize" type="number"
+            value="30" min="6" max="300">
+
+        <label for="fontColor">Text color</label>
+        <input id="fontColor" type="color" value="#000000">
+
+        <label for="fontWeight">Font style</label>
+        <select id="fontWeight">
+            <option value="normal">Normal</option>
+            <option value="bold">Bold</option>
+        </select>
+
+        <label for="textAlign">Text alignment</label>
+        <select id="textAlign">
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+        </select>
+
+        <label>
+            <input id="requiredField" type="checkbox" checked>
+            Required field
+        </label>
+
+        <button class="action" onclick="addField()">
+            Add Text Field
+        </button>
+
+        <button class="action secondary" onclick="saveTemplate()">
+            Save Template
+        </button>
+
+        <button class="action secondary" onclick="loadTemplate()">
+            Load Saved Template
+        </button>
+
+        <div id="adminStatus" class="status">
+            No template saved yet.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>3. Configured Fields</h2>
+        <div id="fieldsList">
+            <p class="small">No fields added yet.</p>
+        </div>
+    </div>
+
+</section>
+
+<section id="clientSection" class="hidden">
+
+    <div class="card">
+        <h2>Complete Your Form</h2>
+
+        <p class="small">
+            Enter your information below. Your completed image
+            will be generated when you press the download button.
+        </p>
+
+        <form id="clientForm">
+            <div id="clientFields">
+                <p class="small">
+                    No saved template is available in this browser.
+                </p>
+            </div>
+
+            <button class="action" type="submit">
+                Generate and Download Image
+            </button>
+        </form>
+
+        <div id="clientStatus" class="status">
+            Complete the form to generate your image.
+        </div>
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+    Template Text Generator — First Version
+</footer>
+
+<script>
+"use strict";
+
+const canvas = document.getElementById("imageCanvas");
+const ctx = canvas.getContext("2d");
+
+let templateImage = null;
+let templateData = "";
+let fields = [];
+let clickPosition = null;
+
+function showTab(tab) {
+    document.getElementById("adminSection")
+        .classList.toggle("hidden", tab !== "admin");
+
+    document.getElementById("clientSection")
+        .classList.toggle("hidden", tab !== "client");
+
+    document.getElementById("adminTab")
+        .classList.toggle("active", tab === "admin");
+
+    document.getElementById("clientTab")
+        .classList.toggle("active", tab === "client");
+
+    if (tab === "client") {
+        renderClientForm();
+    }
+}
+
+document.getElementById("templateFile")
+.addEventListener("change", function(event) {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg", "image/webp"]
+        .includes(file.type)) {
+        alert("Please select a PNG, JPG or WebP image.");
+        return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+        alert("Please use an image smaller than 8 MB.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const img = new Image();
+
+        img.onload = function() {
+            templateImage = img;
+            templateData = e.target.result;
+            fields = [];
+            clickPosition = null;
+
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+
+            document.getElementById("imageMessage").textContent =
+                "Image loaded. Tap the image to position a field.";
+
+            document.getElementById("adminStatus").textContent =
+                "Template loaded. Add your text fields.";
+
+            drawCanvas();
+            renderFields();
+            renderClientForm();
+        };
+
+        img.onerror = function() {
+            alert("Unable to open this image.");
+        };
+
+        img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+});
+
+canvas.addEventListener("click", function(event) {
+    if (!templateImage) {
+        alert("Upload a template image first.");
+        return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+
+    clickPosition = {
+        x: (event.clientX - rect.left) *
+            canvas.width / rect.width,
+        y: (event.clientY - rect.top) *
+            canvas.height / rect.height
+    };
+
+    document.getElementById("imageMessage").textContent =
+        "Position selected: X=" +
+        Math.round(clickPosition.x) + ", Y=" +
+        Math.round(clickPosition.y) +
+        ". Enter a field name and tap Add Text Field.";
+
+    drawCanvas();
+});
+
+function addField() {
+    if (!templateImage) {
+        alert("Upload a template image first.");
+        return;
+    }
+
+    if (!clickPosition) {
+        alert("Tap the image to choose the text position first.");
+        return;
+    }
+
+    const name = document.getElementById("fieldName")
+        .value.trim();
+
+    if (!name) {
+        alert("Enter a field name.");
+        return;
+    }
+
+    if (fields.some(f => f.name.toLowerCase() === name.toLowerCase())) {
+        alert("A field with this name already exists.");
+        return;
+    }
+
+    const size = Number(document.getElementById("fontSize").value);
+
+    if (!Number.isFinite(size) || size < 6 || size > 300) {
+        alert("Font size must be between 6 and 300 pixels.");
+        return;
+    }
+
+    fields.push({
+        id: Date.now() + Math.random(),
+        name: name,
+        x: clickPosition.x,
+        y: clickPosition.y,
+        size: size,
+        color: document.getElementById("fontColor").value,
+        weight: document.getElementById("fontWeight").value,
+        align: document.getElementById("textAlign").value,
+        required: document.getElementById("requiredField").checked
+    });
+
+    document.getElementById("fieldName").value = "";
+
+    clickPosition = null;
+
+    renderFields();
+    drawCanvas();
+    renderClientForm();
+}
+
+function renderFields() {
+    const list = document.getElementById("fieldsList");
+    list.innerHTML = "";
+
+    if (!fields.length) {
+        list.innerHTML =
+            '<p class="small">No fields added yet.</p>';
+        return;
+    }
+
+    fields.forEach((field, index) => {
+        const item = document.createElement("div");
+        item.className = "field-item";
+
+        const title = document.createElement("strong");
+        title.textContent = (index + 1) + ". " + field.name;
+
+        const details = document.createElement("p");
+        details.className = "small";
+        details.textContent =
+            "Position: " + Math.round(field.x) + ", " +
+            Math.round(field.y) +
+            " | Size: " + field.size +
+            " | Alignment: " + field.align;
+
+        const remove = document.createElement("button");
+        remove.className = "action danger";
+        remove.textContent = "Delete Field";
+
+        remove.onclick = function() {
+            fields.splice(index, 1);
+            renderFields();
+            drawCanvas();
+            renderClientForm();
+        };
+
+        item.appendChild(title);
+        item.appendChild(details);
+        item.appendChild(remove);
+        list.appendChild(item);
+    });
+}
+
+function drawCanvas() {
+    if (!templateImage) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(templateImage, 0, 0);
+
+    fields.forEach((field, index) => {
+        ctx.save();
+
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = "#075bdb";
+        ctx.textAlign = "left";
+
+        ctx.fillText(
+            (index + 1) + ". " + field.name,
+            field.x + 5,
+            field.y - 8
+        );
+
+        ctx.beginPath();
+        ctx.arc(field.x, field.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    });
+
+    if (clickPosition) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(
+            clickPosition.x,
+            clickPosition.y,
+            8, 0, Math.PI * 2
+        );
+        ctx.strokeStyle = "#dc2626";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+function clearTemplate() {
+    if (!confirm("Remove the current image and all its fields?")) {
+        return;
+    }
+
+    templateImage = null;
+    templateData = "";
+    fields = [];
+    clickPosition = null;
+
+    canvas.width = 300;
+    canvas.height = 100;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    document.getElementById("templateFile").value = "";
+    document.getElementById("imageMessage").textContent =
+        "Upload a template image to begin.";
+
+    document.getElementById("adminStatus").textContent =
+        "Current template removed.";
+
+    renderFields();
+    renderClientForm();
+}
+
+function saveTemplate() {
+    if (!templateData || !templateImage) {
+        alert("Upload a template image first.");
+        return;
+    }
+
+    if (!fields.length) {
+        alert("Add at least one text field before saving.");
+        return;
+    }
+
+    const data = {
+        image: templateData,
+        width: templateImage.naturalWidth,
+        height: templateImage.naturalHeight,
+        fields: fields
+    };
+
+    try {
+        localStorage.setItem(
+            "templateTextGenerator",
+            JSON.stringify(data)
+        );
+
+        document.getElementById("adminStatus").textContent =
+            "Template saved in this browser.";
+
+        alert("Template saved successfully in this browser.");
+    } catch (error) {
+        alert(
+            "Unable to save. The image may be too large. " +
+            "Try a smaller image."
+        );
+    }
+}
+
+function loadTemplate() {
+    const saved = localStorage.getItem("templateTextGenerator");
+
+    if (!saved) {
+        alert("No saved template found in this browser.");
+        return;
+    }
+
+    let data;
+
+    try {
+        data = JSON.parse(saved);
+    } catch (error) {
+        alert("The saved template could not be read.");
+        return;
+    }
+
+    const img = new Image();
+
+    img.onload = function() {
+        templateImage = img;
+        templateData = data.image;
+        fields = Array.isArray(data.fields) ? data.fields : [];
+        clickPosition = null;
+
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+
+        drawCanvas();
+        renderFields();
+        renderClientForm();
+
+        document.getElementById("adminStatus").textContent =
+            "Saved template loaded successfully.";
+
+        document.getElementById("imageMessage").textContent =
+            "Saved template loaded. You can edit the fields.";
+    };
+
+    img.onerror = function() {
+        alert("Unable to load the saved image.");
+    };
+
+    img.src = data.image;
+}
+
+function renderClientForm() {
+    const container = document.getElementById("clientFields");
+    container.innerHTML = "";
+
+    if (!templateData || fields.length === 0) {
+        container.innerHTML =
+            '<p class="small">The admin must create and save a ' +
+            'template first. For this first version, the saved ' +
+            'template must be in this same browser.</p>';
+        return;
+    }
+
+    fields.forEach((field, index) => {
+        const label = document.createElement("label");
+        label.htmlFor = "clientField" + index;
+        label.textContent = field.name +
+            (field.required ? " *" : "");
+
+        const input = document.createElement("input");
+        input.id = "clientField" + index;
+        input.name = "clientField" + index;
+        input.type = "text";
+        input.autocomplete = "off";
+        input.required = field.required;
+        input.maxLength = 200;
+
+        container.appendChild(label);
+        container.appendChild(input);
+    });
+}
+
+document.getElementById("clientForm")
+.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    if (!templateImage || fields.length === 0) {
+        alert("No template is available.");
+        return;
+    }
+
+    const output = document.createElement("canvas");
+    output.width = templateImage.naturalWidth;
+    output.height = templateImage.naturalHeight;
+
+    const out = output.getContext("2d");
+    out.drawImage(templateImage, 0, 0);
+
+    fields.forEach((field, index) => {
+        const input = document.getElementById("clientField" + index);
+        const value = input ? input.value.trim() : "";
+
+        out.save();
+
+        out.fillStyle = field.color;
+        out.font = field.weight + " " + field.size + "px Arial";
+        out.textAlign = field.align;
+        out.textBaseline = "alphabetic";
+
+        out.fillText(
+            value,
+            field.x,
+            field.y,
+            Math.max(10, output.width - field.x)
+        );
+
+        out.restore();
+    });
+
+    output.toBlob(function(blob) {
+        if (!blob) {
+            alert("Unable to generate the image.");
+            return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "completed-image.png";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(function() {
+            URL.revokeObjectURL(url);
+        }, 10000);
+
+        document.getElementById("clientStatus").textContent =
+            "Your image has been generated. Check your Downloads folder.";
+    }, "image/png");
+});
+
+renderFields();
+renderClientForm();
+</script>
+
+</body>
+  </html>
