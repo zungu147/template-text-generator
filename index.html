@@ -4,768 +4,608 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Template Text Generator</title>
-
 <style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f3f5f9;
-    color: #202b3c;
-}
-
-header {
-    background: #172554;
-    color: white;
-    padding: 20px 15px;
-    text-align: center;
-}
-
-header h1 {
-    margin: 0 0 8px;
-    font-size: 24px;
-}
-
-header p {
-    margin: 0;
-    font-size: 14px;
-}
-
-nav {
-    display: flex;
-    background: white;
-    border-bottom: 1px solid #ddd;
-}
-
-nav button {
-    flex: 1;
-    padding: 15px 5px;
-    border: 0;
-    background: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-nav button.active {
-    background: #2563eb;
-    color: white;
-}
-
-main {
-    max-width: 850px;
-    margin: auto;
-    padding: 15px;
-}
-
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px #0000000c;
-}
-
-h2 {
-    font-size: 20px;
-    margin-top: 0;
-}
-
-h3 {
-    font-size: 16px;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    margin: 14px 0 6px;
-}
-
-input, select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 7px;
-    font-size: 16px;
-    background: white;
-}
-
-input[type="color"] {
-    height: 45px;
-    padding: 4px;
-}
-
-input[type="checkbox"] {
-    width: auto;
-}
-
-button.action {
-    width: 100%;
-    border: 0;
-    border-radius: 7px;
-    padding: 13px;
-    margin-top: 12px;
-    background: #2563eb;
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button.secondary {
-    background: #475569;
-}
-
-button.danger {
-    background: #dc2626;
-}
-
-button:disabled {
-    opacity: 0.5;
-}
-
-#imageCanvas {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-top: 12px;
-    border: 1px solid #cbd5e1;
-    cursor: crosshair;
-    touch-action: manipulation;
-}
-
-.field-item {
-    border: 1px solid #dbe2ea;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 10px;
-}
-
-.field-item p {
-    overflow-wrap: anywhere;
-}
-
-.small {
-    color: #64748b;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.status {
-    padding: 12px;
-    border-radius: 7px;
-    margin-top: 12px;
-    background: #eff6ff;
-    overflow-wrap: anywhere;
-}
-
-#clientForm label {
-    margin-top: 18px;
-}
-
-footer {
-    text-align: center;
-    color: #64748b;
-    font-size: 12px;
-    padding: 20px;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#202b3c}
+header{background:#172554;color:white;padding:20px 15px;text-align:center}
+header h1{margin:0 0 8px;font-size:24px}
+header p{margin:0;font-size:14px;opacity:.9}
+nav{display:flex;background:white;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:10}
+nav button{flex:1;padding:15px 5px;border:0;background:white;font-weight:bold;cursor:pointer}
+nav button.active{background:#2563eb;color:white}
+main{max-width:900px;margin:auto;padding:15px}
+.card{background:white;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #0000000c}
+h2{font-size:18px;margin-top:0}
+h3{font-size:15px;margin:18px 0 8px}
+label{display:block;font-weight:bold;margin:14px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:7px;font-size:15px;background:white}
+textarea{font-family:monospace;font-size:13px}
+input[type="color"]{height:45px;padding:4px}
+button.action{width:100%;border:0;border-radius:7px;padding:13px;margin-top:12px;background:#2563eb;color:white;font-size:15px;font-weight:bold;cursor:pointer}
+button.secondary{background:#475569}
+button.danger{background:#dc2626}
+button.ghost{background:#eef2ff;color:#1e3a8a;border:1px solid #c7d2fe}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.smallBtn{width:auto;padding:8px 12px;font-size:13px;margin-top:8px}
+#imageCanvas,#previewCanvas{display:block;width:100%;height:auto;margin-top:12px;border:1px solid #cbd5e1;background:#f8fafc}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+.template-card{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;background:white;cursor:pointer;transition:box-shadow .15s}
+.template-card:hover{box-shadow:0 4px 12px #0001}
+.template-card.selected{outline:2px solid #2563eb;outline-offset:0}
+.template-card img{width:100%;height:140px;object-fit:cover;display:block;background:#f1f5f9}
+.template-card-body{padding:10px}
+.template-card-body strong{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.template-card-body span{font-size:12px;color:#64748b}
+.badge{display:inline-block;background:#eff6ff;color:#1d4ed8;border:1px solid #dbeafe;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:bold;margin-top:6px}
+.field-item{border:1px solid #dbe2ea;border-radius:8px;padding:12px;margin-top:10px}
+.field-item p{overflow-wrap:anywhere}
+.small{color:#64748b;font-size:13px;line-height:1.5}
+.hidden{display:none !important}
+.status{padding:12px;border-radius:7px;margin-top:12px;background:#eff6ff;overflow-wrap:anywhere;font-size:13px}
+.callout{padding:12px;border-radius:7px;margin-top:12px;background:#fffbeb;border:1px solid #fde68a;font-size:13px;line-height:1.5}
+.devBox{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;line-height:1.6;overflow:auto;max-height:360px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr} .gallery{grid-template-columns:1fr 1fr}}
+footer{text-align:center;color:#64748b;font-size:12px;padding:20px}
+hr{border:0;border-top:1px solid #e2e8f0;margin:16px 0}
 </style>
 </head>
-
 <body>
-
 <header>
     <h1>Template Text Generator</h1>
-    <p>Create customized images from your templates</p>
+    <p>Admin uploads unfilled template • Developer sets coordinates • Client fills &amp; downloads</p>
 </header>
-
 <nav>
-    <button id="adminTab" class="active"
-        onclick="showTab('admin')">Admin</button>
-
-    <button id="clientTab"
-        onclick="showTab('client')">Client Form</button>
+    <button id="adminTab" class="active" onclick="showTab('admin')">Admin</button>
+    <button id="clientTab" onclick="showTab('client')">Client</button>
 </nav>
-
 <main>
 
+<!-- ADMIN -->
 <section id="adminSection">
-
     <div class="card">
-        <h2>1. Upload Template</h2>
+        <h2>Admin — Upload Unfilled Templates</h2>
+        <p class="small">Upload one or more unfilled images (PNG/JPG/WebP, &lt;8 MB each). Coordinates are <b>not</b> set by clicking — they are fixed by the developer in the code below. Each upload creates a new template the client can fill.</p>
 
-        <p class="small">
-            Upload an image that you are authorized to use.
-            Supported formats include PNG, JPG and WebP.
-        </p>
+        <label for="templateFile">Choose unfilled image</label>
+        <input id="templateFile" type="file" accept="image/png,image/jpeg,image/webp">
 
-        <label for="templateFile">Choose template image</label>
-        <input id="templateFile" type="file"
-            accept="image/png,image/jpeg,image/webp">
+        <label for="templateName">Template name</label>
+        <input id="templateName" type="text" placeholder="e.g. Certificate 2025" maxlength="60">
 
-        <button class="action" onclick="clearTemplate()">
-            Remove Current Template
-        </button>
+        <label for="templateType">Developer layout to apply</label>
+        <select id="templateType"></select>
+        <p class="small">Layout defines field names + coordinates. Edit layouts in <code>TEMPLATES_CONFIG</code> inside <code>index.html</code>.</p>
+
+        <canvas id="imageCanvas" width="800" height="450"></canvas>
+        <div id="imageMessage" class="status">Upload an image to preview developer coordinates.</div>
+
+        <button class="action" onclick="saveTemplate()">Save as New Template</button>
+        <button class="action ghost" onclick="clearCurrent()">Clear Preview</button>
+        <div id="adminStatus" class="status">No template saved yet in this browser.</div>
     </div>
 
     <div class="card">
-        <h2>2. Position Text Fields</h2>
-
-        <p class="small">
-            Tap the image where the text should appear.
-            Then enter a field name, such as Name, Date or Event.
-        </p>
-
-        <canvas id="imageCanvas"></canvas>
-
-        <div id="imageMessage" class="status">
-            Upload a template image to begin.
+        <h2>Saved Templates Gallery <span id="savedCount" class="small"></span></h2>
+        <p class="small">All templates saved in this browser (localStorage). Client will see the same gallery.</p>
+        <div id="adminGallery" class="gallery"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+            <button class="action secondary smallBtn" onclick="exportTemplates()">Export JSON</button>
+            <label class="action ghost smallBtn" style="text-align:center;cursor:pointer">Import JSON<input id="importFile" type="file" accept="application/json" style="display:none"></label>
+            <button class="action danger smallBtn" onclick="clearAllTemplates()">Delete All Templates</button>
         </div>
-
-        <label for="fieldName">Field name</label>
-        <input id="fieldName" type="text"
-            placeholder="e.g. Full Name">
-
-        <label for="fontSize">Font size (pixels)</label>
-        <input id="fontSize" type="number"
-            value="30" min="6" max="300">
-
-        <label for="fontColor">Text color</label>
-        <input id="fontColor" type="color" value="#000000">
-
-        <label for="fontWeight">Font style</label>
-        <select id="fontWeight">
-            <option value="normal">Normal</option>
-            <option value="bold">Bold</option>
-        </select>
-
-        <label for="textAlign">Text alignment</label>
-        <select id="textAlign">
-            <option value="left">Left</option>
-            <option value="center">Center</option>
-            <option value="right">Right</option>
-        </select>
-
-        <label>
-            <input id="requiredField" type="checkbox" checked>
-            Required field
-        </label>
-
-        <button class="action" onclick="addField()">
-            Add Text Field
-        </button>
-
-        <button class="action secondary" onclick="saveTemplate()">
-            Save Template
-        </button>
-
-        <button class="action secondary" onclick="loadTemplate()">
-            Load Saved Template
-        </button>
-
-        <div id="adminStatus" class="status">
-            No template saved yet.
-        </div>
+        <div id="importStatus" class="status hidden"></div>
     </div>
 
     <div class="card">
-        <h2>3. Configured Fields</h2>
-        <div id="fieldsList">
-            <p class="small">No fields added yet.</p>
-        </div>
+        <h2>Developer Configuration (read-only)</h2>
+        <p class="small">Coordinates are defined by the developer. Admin does <b>not</b> tap the image. To change positions, edit <code>TEMPLATES_CONFIG</code> at the top of <code>index.html</code> &lt;script&gt; — use relative coordinates <code>x: 0-1, y: 0-1</code> so it scales to any image size. <code>size</code> is font size for 1000px-wide reference; it auto-scales.</p>
+        <div class="callout"><b>How to edit:</b> 1) Open <code>index.html</code> → find <code>const TEMPLATES_CONFIG = [</code> → 2) Change <code>x, y, size, color, weight, align, required</code> → 3) Redeploy. No Admin UI change needed.</div>
+        <h3>Current layouts</h3>
+        <div id="devLayouts"></div>
+        <h3>Raw config (copy-paste to share)</h3>
+        <pre id="devRaw" class="devBox"></pre>
     </div>
-
 </section>
 
+<!-- CLIENT -->
 <section id="clientSection" class="hidden">
-
     <div class="card">
-        <h2>Complete Your Form</h2>
-
-        <p class="small">
-            Enter your information below. Your completed image
-            will be generated when you press the download button.
-        </p>
-
-        <form id="clientForm">
-            <div id="clientFields">
-                <p class="small">
-                    No saved template is available in this browser.
-                </p>
-            </div>
-
-            <button class="action" type="submit">
-                Generate and Download Image
-            </button>
-        </form>
-
-        <div id="clientStatus" class="status">
-            Complete the form to generate your image.
-        </div>
+        <h2>Choose a Template</h2>
+        <p class="small">Pick an unfilled template uploaded by admin, fill the form, then download the filled image.</p>
+        <div id="clientGallery" class="gallery"></div>
+        <div id="clientGalleryMsg" class="status">No templates yet. Admin must upload &amp; save at least one.</div>
     </div>
 
+    <div id="clientFormCard" class="card hidden">
+        <h2 id="clientFormTitle">Complete Your Form</h2>
+        <p class="small">Fields are defined by the developer layout. Coordinates are fixed.</p>
+        <canvas id="previewCanvas" width="800" height="450"></canvas>
+        <div id="clientPreviewMsg" class="small" style="margin-top:8px;color:#64748b"></div>
+        <form id="clientForm">
+            <div id="clientFields"></div>
+            <button class="action" type="submit">Generate and Download Image</button>
+        </form>
+        <div id="clientStatus" class="status">Fill the form to generate.</div>
+    </div>
 </section>
 
 </main>
-
-<footer>
-    Template Text Generator — First Version
-</footer>
+<footer>Template Text Generator — Developer-coordinated version • Static • No backend</footer>
 
 <script>
 "use strict";
 
+/* ==========================================================
+   DEVELOPER: EDIT COORDINATES HERE
+   Each layout = one kind of document (Certificate, ID Card, Poster, etc.)
+   x,y are RELATIVE 0..1 (fraction of image width/height) so templates scale.
+   size is for 1000px-wide reference image; it auto-scales to actual image.
+   ========================================================== */
+const TEMPLATES_CONFIG = [
+  {
+    id: "certificate",
+    name: "Certificate",
+    description: "Centered name + date",
+    fields: [
+      { name: "Full Name",   x: 0.50, y: 0.42, size: 48, color: "#0f172a", weight: "bold",   align: "center", required: true, maxLength: 60 },
+      { name: "Course/Event",x: 0.50, y: 0.52, size: 28, color: "#334155", weight: "normal", align: "center", required: true, maxLength: 80 },
+      { name: "Date",        x: 0.50, y: 0.62, size: 20, color: "#475569", weight: "normal", align: "center", required: true, maxLength: 30 }
+    ]
+  },
+  {
+    id: "id_card",
+    name: "ID Card",
+    description: "Top-left aligned fields",
+    fields: [
+      { name: "Name",       x: 0.08, y: 0.35, size: 26, color: "#111827", weight: "bold",   align: "left", required: true, maxLength: 40 },
+      { name: "ID Number",  x: 0.08, y: 0.50, size: 20, color: "#1f2937", weight: "normal", align: "left", required: true, maxLength: 30 },
+      { name: "Department", x: 0.08, y: 0.65, size: 18, color: "#374151", weight: "normal", align: "left", required: false, maxLength: 40 }
+    ]
+  },
+  {
+    id: "poster",
+    name: "Poster / Invitation",
+    description: "Mixed alignments",
+    fields: [
+      { name: "Headline",  x: 0.50, y: 0.28, size: 42, color: "#7c2d12", weight: "bold",   align: "center", required: true, maxLength: 50 },
+      { name: "Venue",     x: 0.50, y: 0.78, size: 22, color: "#1e3a8a", weight: "normal", align: "center", required: true, maxLength: 60 },
+      { name: "Date/Time", x: 0.50, y: 0.85, size: 18, color: "#334155", weight: "normal", align: "center", required: true, maxLength: 40 }
+    ]
+  }
+];
+// Reference width for font scaling (developer sets size for this width)
+const REF_WIDTH = 1000;
+
+// === STATE ===
+const LS_KEY = "ttg_templates_v2";
 const canvas = document.getElementById("imageCanvas");
 const ctx = canvas.getContext("2d");
+const previewCanvas = document.getElementById("previewCanvas");
+const pctx = previewCanvas.getContext("2d");
 
-let templateImage = null;
-let templateData = "";
-let fields = [];
-let clickPosition = null;
+let draftImage = null; // Image object for preview before save
+let draftData = "";    // dataURL
+let templates = [];
+let selectedId = null; // client selected template id
+let adminSelectedId = null;
 
-function showTab(tab) {
-    document.getElementById("adminSection")
-        .classList.toggle("hidden", tab !== "admin");
-
-    document.getElementById("clientSection")
-        .classList.toggle("hidden", tab !== "client");
-
-    document.getElementById("adminTab")
-        .classList.toggle("active", tab === "admin");
-
-    document.getElementById("clientTab")
-        .classList.toggle("active", tab === "client");
-
-    if (tab === "client") {
-        renderClientForm();
-    }
+function showTab(tab){
+  document.getElementById("adminSection").classList.toggle("hidden", tab!=="admin");
+  document.getElementById("clientSection").classList.toggle("hidden", tab!=="client");
+  document.getElementById("adminTab").classList.toggle("active", tab==="admin");
+  document.getElementById("clientTab").classList.toggle("active", tab==="client");
+  if(tab==="client") renderClientGallery();
+  if(tab==="admin") renderAdminGallery();
 }
 
-document.getElementById("templateFile")
-.addEventListener("change", function(event) {
-    const file = event.target.files[0];
+// Populate templateType dropdown + dev info
+function initDevUI(){
+  const sel = document.getElementById("templateType");
+  sel.innerHTML="";
+  TEMPLATES_CONFIG.forEach(c=>{
+    const o=document.createElement("option");
+    o.value=c.id; o.textContent=c.name+" — "+c.description;
+    sel.appendChild(o);
+  });
+  // dev layouts
+  const devDiv=document.getElementById("devLayouts");
+  devDiv.innerHTML="";
+  TEMPLATES_CONFIG.forEach(c=>{
+    const box=document.createElement("div");
+    box.className="field-item";
+    box.innerHTML=`<strong>${c.name}</strong> <span class="badge">${c.id}</span> <p class="small">${c.description}</p>`+
+      c.fields.map((f,i)=>`<p class="small" style="margin:4px 0"><b>${i+1}. ${f.name}</b> — x:${f.x}, y:${f.y}, size:${f.size}, color:${f.color}, weight:${f.weight}, align:${f.align}, required:${f.required}</p>`).join("");
+    devDiv.appendChild(box);
+  });
+  document.getElementById("devRaw").textContent = JSON.stringify(TEMPLATES_CONFIG,null,2);
+}
+initDevUI();
 
-    if (!file) return;
-
-    if (!["image/png", "image/jpeg", "image/webp"]
-        .includes(file.type)) {
-        alert("Please select a PNG, JPG or WebP image.");
-        return;
+// Storage helpers
+function loadStore(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(raw) templates=JSON.parse(raw);
+    // migrate old single-template key if exists and no new templates
+    if((!templates || !templates.length)){
+      const old=localStorage.getItem("templateTextGenerator");
+      if(old){
+        try{
+          const d=JSON.parse(old);
+          if(d && d.image){
+            const cfg=TEMPLATES_CONFIG[0];
+            templates=[{
+              id:"migrated_"+Date.now(),
+              configId: cfg.id,
+              name: "Migrated Template — "+cfg.name,
+              image: d.image,
+              width: d.width,
+              height: d.height,
+              fields: d.fields || resolvedFields(cfg, d.width, d.height)
+            }];
+            persist();
+          }
+        }catch{}
+      }
     }
+    if(!Array.isArray(templates)) templates=[];
+  }catch{ templates=[]; }
+}
+function persist(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(templates)); }catch(e){
+    alert("Unable to save — browser storage full. Try a smaller image or delete old templates.");
+    throw e;
+  }
+}
 
-    if (file.size > 8 * 1024 * 1024) {
-        alert("Please use an image smaller than 8 MB.");
-        return;
-    }
+// Resolve developer relative fields to absolute for a given image size
+function resolvedFields(config, w, h){
+  const scale = w / REF_WIDTH;
+  return config.fields.map(f=>({
+    name: f.name,
+    // store absolute for rendering/saving (so download is pixel-perfect)
+    x: f.x <= 1 && f.y <= 1 ? f.x * w : f.x,
+    y: f.x <= 1 && f.y <= 1 ? f.y * h : f.y,
+    size: Math.round(f.size * scale),
+    color: f.color,
+    weight: f.weight,
+    align: f.align,
+    required: !!f.required,
+    maxLength: f.maxLength || 200,
+    // keep relative too for reference
+    _rx: f.x, _ry: f.y
+  }));
+}
 
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        const img = new Image();
-
-        img.onload = function() {
-            templateImage = img;
-            templateData = e.target.result;
-            fields = [];
-            clickPosition = null;
-
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-
-            document.getElementById("imageMessage").textContent =
-                "Image loaded. Tap the image to position a field.";
-
-            document.getElementById("adminStatus").textContent =
-                "Template loaded. Add your text fields.";
-
-            drawCanvas();
-            renderFields();
-            renderClientForm();
-        };
-
-        img.onerror = function() {
-            alert("Unable to open this image.");
-        };
-
-        img.src = e.target.result;
+// File input
+document.getElementById("templateFile").addEventListener("change", e=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  if(!["image/png","image/jpeg","image/webp"].includes(file.type)){
+    alert("Please use PNG, JPG or WebP."); return;
+  }
+  if(file.size>8*1024*1024){ alert("Please use an image smaller than 8 MB."); return; }
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      draftImage=img;
+      draftData=ev.target.result;
+      canvas.width=img.naturalWidth;
+      canvas.height=img.naturalHeight;
+      document.getElementById("imageMessage").textContent=`Loaded ${img.naturalWidth}×${img.naturalHeight}. Preview shows developer coordinates for "${currentConfig().name}".`;
+      drawDraft();
+      // auto-fill name if empty
+      const n=document.getElementById("templateName");
+      if(!n.value.trim()) n.value=currentConfig().name+" "+(templates.length+1);
     };
-
-    reader.readAsDataURL(file);
+    img.onerror=()=>alert("Unable to open this image.");
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
 });
 
-canvas.addEventListener("click", function(event) {
-    if (!templateImage) {
-        alert("Upload a template image first.");
-        return;
-    }
-
-    const rect = canvas.getBoundingClientRect();
-
-    clickPosition = {
-        x: (event.clientX - rect.left) *
-            canvas.width / rect.width,
-        y: (event.clientY - rect.top) *
-            canvas.height / rect.height
-    };
-
-    document.getElementById("imageMessage").textContent =
-        "Position selected: X=" +
-        Math.round(clickPosition.x) + ", Y=" +
-        Math.round(clickPosition.y) +
-        ". Enter a field name and tap Add Text Field.";
-
-    drawCanvas();
+function currentConfig(){
+  const id=document.getElementById("templateType").value;
+  return TEMPLATES_CONFIG.find(c=>c.id===id) || TEMPLATES_CONFIG[0];
+}
+document.getElementById("templateType").addEventListener("change", ()=>{
+  if(draftImage) {
+    document.getElementById("imageMessage").textContent=`Layout changed to "${currentConfig().name}". Preview updated.`;
+    drawDraft();
+    const n=document.getElementById("templateName");
+    if(n.value.trim()==="") n.value=currentConfig().name+" "+(templates.length+1);
+  }
 });
 
-function addField() {
-    if (!templateImage) {
-        alert("Upload a template image first.");
-        return;
-    }
-
-    if (!clickPosition) {
-        alert("Tap the image to choose the text position first.");
-        return;
-    }
-
-    const name = document.getElementById("fieldName")
-        .value.trim();
-
-    if (!name) {
-        alert("Enter a field name.");
-        return;
-    }
-
-    if (fields.some(f => f.name.toLowerCase() === name.toLowerCase())) {
-        alert("A field with this name already exists.");
-        return;
-    }
-
-    const size = Number(document.getElementById("fontSize").value);
-
-    if (!Number.isFinite(size) || size < 6 || size > 300) {
-        alert("Font size must be between 6 and 300 pixels.");
-        return;
-    }
-
-    fields.push({
-        id: Date.now() + Math.random(),
-        name: name,
-        x: clickPosition.x,
-        y: clickPosition.y,
-        size: size,
-        color: document.getElementById("fontColor").value,
-        weight: document.getElementById("fontWeight").value,
-        align: document.getElementById("textAlign").value,
-        required: document.getElementById("requiredField").checked
-    });
-
-    document.getElementById("fieldName").value = "";
-
-    clickPosition = null;
-
-    renderFields();
-    drawCanvas();
-    renderClientForm();
+function drawDraft(){
+  if(!draftImage){ ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+  const cfg=currentConfig();
+  const fields=resolvedFields(cfg, draftImage.naturalWidth, draftImage.naturalHeight);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(draftImage,0,0);
+  // draw markers for each field
+  fields.forEach((f,i)=>{
+    ctx.save();
+    // label
+    ctx.font=`bold ${Math.max(12, Math.round(14 * draftImage.naturalWidth/800))}px Arial`;
+    ctx.fillStyle="#075bdb";
+    ctx.textAlign=f.align==="center"?"center":f.align==="right"?"right":"left";
+    // offset label above point slightly
+    let tx=f.x, ty=f.y - 10;
+    // keep inside bounds
+    ctx.fillText((i+1)+". "+f.name, tx, ty);
+    // anchor dot
+    ctx.beginPath(); ctx.arc(f.x,f.y, Math.max(4, draftImage.naturalWidth/200),0,Math.PI*2); ctx.fillStyle="#2563eb"; ctx.fill();
+    ctx.strokeStyle="white"; ctx.lineWidth=2; ctx.stroke();
+    // faint guide line for alignment
+    ctx.beginPath(); ctx.moveTo(f.x-30,f.y); ctx.lineTo(f.x+30,f.y); ctx.strokeStyle="#93c5fd"; ctx.lineWidth=1; ctx.stroke();
+    ctx.restore();
+  });
 }
 
-function renderFields() {
-    const list = document.getElementById("fieldsList");
-    list.innerHTML = "";
-
-    if (!fields.length) {
-        list.innerHTML =
-            '<p class="small">No fields added yet.</p>';
-        return;
-    }
-
-    fields.forEach((field, index) => {
-        const item = document.createElement("div");
-        item.className = "field-item";
-
-        const title = document.createElement("strong");
-        title.textContent = (index + 1) + ". " + field.name;
-
-        const details = document.createElement("p");
-        details.className = "small";
-        details.textContent =
-            "Position: " + Math.round(field.x) + ", " +
-            Math.round(field.y) +
-            " | Size: " + field.size +
-            " | Alignment: " + field.align;
-
-        const remove = document.createElement("button");
-        remove.className = "action danger";
-        remove.textContent = "Delete Field";
-
-        remove.onclick = function() {
-            fields.splice(index, 1);
-            renderFields();
-            drawCanvas();
-            renderClientForm();
-        };
-
-        item.appendChild(title);
-        item.appendChild(details);
-        item.appendChild(remove);
-        list.appendChild(item);
-    });
+function clearCurrent(){
+  draftImage=null; draftData="";
+  canvas.width=800; canvas.height=450;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  document.getElementById("templateFile").value="";
+  document.getElementById("imageMessage").textContent="Upload an image to preview developer coordinates.";
 }
 
-function drawCanvas() {
-    if (!templateImage) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        return;
-    }
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(templateImage, 0, 0);
-
-    fields.forEach((field, index) => {
-        ctx.save();
-
-        ctx.font = "bold 14px Arial";
-        ctx.fillStyle = "#075bdb";
-        ctx.textAlign = "left";
-
-        ctx.fillText(
-            (index + 1) + ". " + field.name,
-            field.x + 5,
-            field.y - 8
-        );
-
-        ctx.beginPath();
-        ctx.arc(field.x, field.y, 5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.restore();
-    });
-
-    if (clickPosition) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(
-            clickPosition.x,
-            clickPosition.y,
-            8, 0, Math.PI * 2
-        );
-        ctx.strokeStyle = "#dc2626";
-        ctx.lineWidth = 3;
-        ctx.stroke();
-        ctx.restore();
-    }
+function saveTemplate(){
+  if(!draftImage || !draftData){ alert("Upload an unfilled template image first."); return; }
+  const name=document.getElementById("templateName").value.trim() || (currentConfig().name+" "+(templates.length+1));
+  const cfg=currentConfig();
+  const fields=resolvedFields(cfg, draftImage.naturalWidth, draftImage.naturalHeight);
+  const entry={
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    configId: cfg.id,
+    name: name,
+    image: draftData,
+    width: draftImage.naturalWidth,
+    height: draftImage.naturalHeight,
+    fields: fields,
+    createdAt: new Date().toISOString()
+  };
+  templates.unshift(entry);
+  persist();
+  document.getElementById("adminStatus").textContent=`Saved "${name}" with ${fields.length} developer fields.`;
+  document.getElementById("imageMessage").textContent=`Saved. You can upload another image or change layout.`;
+  // reset draft name for next
+  document.getElementById("templateName").value="";
+  renderAdminGallery();
+  renderClientGallery();
 }
 
-function clearTemplate() {
-    if (!confirm("Remove the current image and all its fields?")) {
-        return;
-    }
-
-    templateImage = null;
-    templateData = "";
-    fields = [];
-    clickPosition = null;
-
-    canvas.width = 300;
-    canvas.height = 100;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    document.getElementById("templateFile").value = "";
-    document.getElementById("imageMessage").textContent =
-        "Upload a template image to begin.";
-
-    document.getElementById("adminStatus").textContent =
-        "Current template removed.";
-
-    renderFields();
-    renderClientForm();
+function renderAdminGallery(){
+  loadStore();
+  const g=document.getElementById("adminGallery");
+  const c=document.getElementById("savedCount");
+  g.innerHTML="";
+  c.textContent=`(${templates.length})`;
+  if(!templates.length){
+    g.innerHTML='<p class="small">No templates saved yet in this browser. Upload one above.</p>';
+    document.getElementById("adminStatus").textContent="No template saved yet in this browser.";
+    return;
+  }
+  document.getElementById("adminStatus").textContent=`${templates.length} template(s) saved in this browser.`;
+  templates.forEach(t=>{
+    const card=document.createElement("div");
+    card.className="template-card"+(adminSelectedId===t.id?" selected":"");
+    card.innerHTML=`<img src="${t.image}" alt=""><div class="template-card-body"><strong>${escapeHtml(t.name)}</strong><span>${t.width}×${t.height} • ${t.fields.length} fields • ${t.configId}</span><br><span class="badge">${new Date(t.createdAt).toLocaleDateString()}</span>
+      <div style="display:flex;gap:6px;margin-top:8px"><button class="action ghost smallBtn" style="flex:1">Preview</button><button class="action danger smallBtn" style="flex:1">Delete</button></div></div>`;
+    const [previewBtn, delBtn] = card.querySelectorAll("button");
+    previewBtn.onclick=(e)=>{ e.stopPropagation(); previewAdminTemplate(t.id); };
+    delBtn.onclick=(e)=>{ e.stopPropagation(); deleteTemplate(t.id); };
+    card.onclick=()=> previewAdminTemplate(t.id);
+    g.appendChild(card);
+  });
 }
 
-function saveTemplate() {
-    if (!templateData || !templateImage) {
-        alert("Upload a template image first.");
-        return;
-    }
-
-    if (!fields.length) {
-        alert("Add at least one text field before saving.");
-        return;
-    }
-
-    const data = {
-        image: templateData,
-        width: templateImage.naturalWidth,
-        height: templateImage.naturalHeight,
-        fields: fields
-    };
-
-    try {
-        localStorage.setItem(
-            "templateTextGenerator",
-            JSON.stringify(data)
-        );
-
-        document.getElementById("adminStatus").textContent =
-            "Template saved in this browser.";
-
-        alert("Template saved successfully in this browser.");
-    } catch (error) {
-        alert(
-            "Unable to save. The image may be too large. " +
-            "Try a smaller image."
-        );
-    }
+function previewAdminTemplate(id){
+  adminSelectedId=id;
+  const t=templates.find(x=>x.id===id);
+  if(!t) return;
+  const img=new Image();
+  img.onload=()=>{
+    draftImage=img; draftData=t.image;
+    canvas.width=t.width; canvas.height=t.height;
+    // set dropdown to its config
+    document.getElementById("templateType").value=t.configId;
+    document.getElementById("templateName").value=t.name+" (copy)";
+    document.getElementById("imageMessage").textContent=`Previewing saved template "${t.name}" — ${t.width}×${t.height}`;
+    drawDraft();
+    renderAdminGallery();
+    window.scrollTo({top:0, behavior:"smooth"});
+  };
+  img.src=t.image;
 }
-
-function loadTemplate() {
-    const saved = localStorage.getItem("templateTextGenerator");
-
-    if (!saved) {
-        alert("No saved template found in this browser.");
-        return;
-    }
-
-    let data;
-
-    try {
-        data = JSON.parse(saved);
-    } catch (error) {
-        alert("The saved template could not be read.");
-        return;
-    }
-
-    const img = new Image();
-
-    img.onload = function() {
-        templateImage = img;
-        templateData = data.image;
-        fields = Array.isArray(data.fields) ? data.fields : [];
-        clickPosition = null;
-
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-
-        drawCanvas();
-        renderFields();
-        renderClientForm();
-
-        document.getElementById("adminStatus").textContent =
-            "Saved template loaded successfully.";
-
-        document.getElementById("imageMessage").textContent =
-            "Saved template loaded. You can edit the fields.";
-    };
-
-    img.onerror = function() {
-        alert("Unable to load the saved image.");
-    };
-
-    img.src = data.image;
+function deleteTemplate(id){
+  const t=templates.find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm(`Delete template "${t.name}"?`)) return;
+  templates=templates.filter(x=>x.id!==id);
+  if(selectedId===id) selectedId=null;
+  if(adminSelectedId===id) adminSelectedId=null;
+  persist();
+  renderAdminGallery();
+  renderClientGallery();
+  document.getElementById("adminStatus").textContent=`Deleted "${t.name}".`;
 }
-
-function renderClientForm() {
-    const container = document.getElementById("clientFields");
-    container.innerHTML = "";
-
-    if (!templateData || fields.length === 0) {
-        container.innerHTML =
-            '<p class="small">The admin must create and save a ' +
-            'template first. For this first version, the saved ' +
-            'template must be in this same browser.</p>';
-        return;
-    }
-
-    fields.forEach((field, index) => {
-        const label = document.createElement("label");
-        label.htmlFor = "clientField" + index;
-        label.textContent = field.name +
-            (field.required ? " *" : "");
-
-        const input = document.createElement("input");
-        input.id = "clientField" + index;
-        input.name = "clientField" + index;
-        input.type = "text";
-        input.autocomplete = "off";
-        input.required = field.required;
-        input.maxLength = 200;
-
-        container.appendChild(label);
-        container.appendChild(input);
-    });
+function clearAllTemplates(){
+  if(!templates.length){ alert("No templates to delete."); return; }
+  if(!confirm(`Delete all ${templates.length} templates? This cannot be undone.`)) return;
+  templates=[]; selectedId=null; adminSelectedId=null;
+  persist(); renderAdminGallery(); renderClientGallery();
+  document.getElementById("adminStatus").textContent="All templates deleted.";
 }
-
-document.getElementById("clientForm")
-.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    if (!templateImage || fields.length === 0) {
-        alert("No template is available.");
-        return;
-    }
-
-    const output = document.createElement("canvas");
-    output.width = templateImage.naturalWidth;
-    output.height = templateImage.naturalHeight;
-
-    const out = output.getContext("2d");
-    out.drawImage(templateImage, 0, 0);
-
-    fields.forEach((field, index) => {
-        const input = document.getElementById("clientField" + index);
-        const value = input ? input.value.trim() : "";
-
-        out.save();
-
-        out.fillStyle = field.color;
-        out.font = field.weight + " " + field.size + "px Arial";
-        out.textAlign = field.align;
-        out.textBaseline = "alphabetic";
-
-        out.fillText(
-            value,
-            field.x,
-            field.y,
-            Math.max(10, output.width - field.x)
-        );
-
-        out.restore();
-    });
-
-    output.toBlob(function(blob) {
-        if (!blob) {
-            alert("Unable to generate the image.");
-            return;
-        }
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = "completed-image.png";
-
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        setTimeout(function() {
-            URL.revokeObjectURL(url);
-        }, 10000);
-
-        document.getElementById("clientStatus").textContent =
-            "Your image has been generated. Check your Downloads folder.";
-    }, "image/png");
+function exportTemplates(){
+  if(!templates.length){ alert("No templates to export."); return; }
+  const blob=new Blob([JSON.stringify(templates,null,2)], {type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download="templates-export.json"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+}
+document.getElementById("importFile").addEventListener("change", e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const arr=JSON.parse(ev.target.result);
+      if(!Array.isArray(arr)) throw new Error("JSON must be an array");
+      // validate minimal
+      arr.forEach(x=>{ if(!x.image || !x.fields) throw new Error("Missing image/fields"); });
+      templates = arr.concat(templates);
+      persist();
+      document.getElementById("importStatus").classList.remove("hidden");
+      document.getElementById("importStatus").textContent=`Imported ${arr.length} template(s). Total now ${templates.length}.`;
+      renderAdminGallery(); renderClientGallery();
+    }catch(err){ alert("Import failed: "+err.message); }
+  };
+  r.readAsText(file);
+  e.target.value="";
 });
 
-renderFields();
-renderClientForm();
+// Client gallery & form
+function renderClientGallery(){
+  loadStore();
+  const g=document.getElementById("clientGallery");
+  const msg=document.getElementById("clientGalleryMsg");
+  g.innerHTML="";
+  if(!templates.length){
+    msg.classList.remove("hidden");
+    document.getElementById("clientFormCard").classList.add("hidden");
+    msg.textContent="No templates yet. Admin must upload & save at least one unfilled template in this browser.";
+    return;
+  }
+  msg.classList.add("hidden");
+  templates.forEach(t=>{
+    const card=document.createElement("div");
+    card.className="template-card"+(selectedId===t.id?" selected":"");
+    card.innerHTML=`<img src="${t.image}" alt=""><div class="template-card-body"><strong>${escapeHtml(t.name)}</strong><span>${t.width}×${t.height} • ${t.fields.length} fields</span><br><span class="badge">${t.configId}</span></div>`;
+    card.onclick=()=> selectClientTemplate(t.id);
+    g.appendChild(card);
+  });
+  // keep selection if exists
+  if(selectedId){
+    const exists=templates.find(x=>x.id===selectedId);
+    if(exists) selectClientTemplate(selectedId, true);
+    else { selectedId=null; document.getElementById("clientFormCard").classList.add("hidden"); }
+  } else if(templates.length===1){
+    selectClientTemplate(templates[0].id);
+  }
+}
+
+function selectClientTemplate(id, keepScroll){
+  selectedId=id;
+  const t=templates.find(x=>x.id===id);
+  if(!t) return;
+  // highlight
+  document.querySelectorAll("#clientGallery .template-card").forEach((el,i)=>{
+    el.classList.toggle("selected", templates[i] && templates[i].id===id);
+  });
+  // show form
+  const card=document.getElementById("clientFormCard");
+  card.classList.remove("hidden");
+  document.getElementById("clientFormTitle").textContent=`Fill: ${t.name}`;
+  // fields
+  const container=document.getElementById("clientFields");
+  container.innerHTML="";
+  t.fields.forEach((f,i)=>{
+    const label=document.createElement("label");
+    label.htmlFor="clientField"+i;
+    label.textContent=f.name + (f.required?" *":"");
+    const input=document.createElement("input");
+    input.id="clientField"+i;
+    input.name="clientField"+i;
+    input.type="text";
+    input.autocomplete="off";
+    input.required=!!f.required;
+    input.maxLength=f.maxLength || 200;
+    input.placeholder=f.name;
+    container.appendChild(label);
+    container.appendChild(input);
+  });
+  // draw preview
+  const img=new Image();
+  img.onload=()=>{
+    previewCanvas.width=img.naturalWidth;
+    previewCanvas.height=img.naturalHeight;
+    pctx.clearRect(0,0,previewCanvas.width,previewCanvas.height);
+    pctx.drawImage(img,0,0);
+    // draw field guide dots
+    t.fields.forEach((f,i)=>{
+      pctx.save();
+      pctx.font=`bold ${Math.max(12, Math.round(14 * t.width/800))}px Arial`;
+      pctx.fillStyle="#075bdb";
+      pctx.textAlign=f.align==="center"?"center":f.align==="right"?"right":"left";
+      pctx.fillText((i+1)+". "+f.name, f.x, f.y-10);
+      pctx.beginPath(); pctx.arc(f.x,f.y, Math.max(4, t.width/220),0,Math.PI*2); pctx.fillStyle="#2563eb"; pctx.fill();
+      pctx.strokeStyle="white"; pctx.lineWidth=2; pctx.stroke();
+      pctx.restore();
+    });
+    document.getElementById("clientPreviewMsg").textContent=`Preview ${t.width}×${t.height} — dotted guides show where text will be placed (developer coordinates).`;
+  };
+  img.src=t.image;
+  if(!keepScroll) card.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+document.getElementById("clientForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  if(!selectedId){ alert("Pick a template first."); return; }
+  const t=templates.find(x=>x.id===selectedId);
+  if(!t){ alert("Template not found."); return; }
+  const img=new Image();
+  img.onload=()=>{
+    const out=document.createElement("canvas");
+    out.width=t.width; out.height=t.height;
+    const o=out.getContext("2d");
+    o.drawImage(img,0,0);
+    let hasValue=false;
+    t.fields.forEach((f,i)=>{
+      const inp=document.getElementById("clientField"+i);
+      const val=inp ? inp.value.trim() : "";
+      if(val) hasValue=true;
+      if(!val && f.required && !hasValue){
+        // will be caught by required attr, but extra check
+      }
+      o.save();
+      o.fillStyle=f.color;
+      o.font=`${f.weight} ${f.size}px Arial`;
+      o.textAlign=f.align;
+      o.textBaseline="alphabetic";
+      // optional faint shadow for legibility on busy backgrounds
+      // o.shadowColor="rgba(255,255,255,0.9)"; o.shadowBlur=3;
+      const maxW = f.align==="center" ? out.width*0.9 : f.align==="right" ? f.x : Math.max(10, out.width - f.x);
+      // For center/right we adjust fillText wrapping: clamp
+      // Simple single-line with maxWidth, center needs x centered, so clamp width both sides
+      o.fillText(val, f.x, f.y, maxW);
+      o.restore();
+    });
+    out.toBlob(blob=>{
+      if(!blob){ alert("Unable to generate image."); return; }
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url;
+      a.download= sanitizeFilename(t.name) + "-filled.png";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 10000);
+      document.getElementById("clientStatus").textContent=`Generated "${t.name}". Check your Downloads folder.`;
+    },"image/png");
+  };
+  img.onerror=()=>alert("Unable to load template image.");
+  img.src=t.image;
+});
+
+function sanitizeFilename(s){ return s.replace(/[^a-z0-9_\-]+/gi,"_").slice(0,40) || "completed-image"; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m])); }
+
+// init
+loadStore();
+renderAdminGallery();
+renderClientGallery();
+drawDraft();
 </script>
-
 </body>
-  </html>
+</html>
